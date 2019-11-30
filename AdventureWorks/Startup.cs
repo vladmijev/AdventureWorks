@@ -36,8 +36,6 @@ namespace AdventureWorks
 
 			services.AddSingleton<IProductionService, ProductionService>();
 			services.AddSingleton<IPurchaseOrderDetailService, PurchaseOrderDetailService>();
-			services.AddSingleton<AdventureWorks2016Context>();
-
 			services.AddMvc().AddControllersAsServices();
 
 			services.AddDbContext<AdventureWorks2016Context>(option => option.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")) );
@@ -55,7 +53,7 @@ namespace AdventureWorks
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
 		{
 			if (env.IsDevelopment())
 			{
@@ -63,6 +61,8 @@ namespace AdventureWorks
 			}
 
 			app.UseMvc();
+
+			appLifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());
 		}
 	}
 }
